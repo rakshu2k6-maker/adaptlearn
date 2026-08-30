@@ -1378,61 +1378,61 @@ if page == "🧩 Adaptive Quiz":
                     "🎉 No major weak concepts detected!"
                 )
                 st.divider()
-
-st.subheader(
-    "📋 Question-by-Question Result"
-)
-
-for i, result in enumerate(
-    st.session_state[
-        "question_results"
-    ]
-):
-
-    st.markdown(
-        f"### Question {i + 1}"
+if "question_results" in st.session_state:
+    st.subheader(
+        "📋 Question-by-Question Result"
     )
 
-    st.write(
-        result["question"]
-    )
+    for i, result in enumerate(
+        st.session_state[
+            "question_results"
+        ]
+    ):
 
-    if result["status"] == "correct":
-
-        st.success(
-            f"✅ Your answer: "
-            f"{result['selected_answer']}"
+        st.markdown(
+            f"### Question {i + 1}"
         )
 
-    elif result["status"] == "wrong":
-
-        st.error(
-            f"❌ Your answer: "
-            f"{result['selected_answer']}"
+        st.write(
+            result["question"]
         )
 
-        st.success(
-            f"✅ Correct answer: "
-            f"{result['correct_answer']}"
+        if result["status"] == "correct":
+
+            st.success(
+                f"✅ Your answer: "
+                f"{result['selected_answer']}"
+            )
+
+        elif result["status"] == "wrong":
+
+            st.error(
+                f"❌ Your answer: "
+                f"{result['selected_answer']}"
+            )
+
+            st.success(
+                f"✅ Correct answer: "
+                f"{result['correct_answer']}"
+            )
+
+        else:
+
+            st.warning(
+                "⚠️ You skipped this question."
+            )
+
+            st.success(
+                f"✅ Correct answer: "
+                f"{result['correct_answer']}"
+            )
+
+        st.caption(
+            f"Concept: "
+            f"{result['concept']}"
         )
 
-    else:
-
-        st.warning(
-            "⚠️ You skipped this question."
-        )
-
-        st.success(
-            f"✅ Correct answer: "
-            f"{result['correct_answer']}"
-        )
-
-    st.caption(
-        f"Concept: "
-        f"{result['concept']}"
-    )
-
-    st.divider()
+        st.divider()
 # ==================================================
 # RECOMMENDATIONS PAGE
 # ==================================================
