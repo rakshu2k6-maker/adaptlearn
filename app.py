@@ -13,18 +13,14 @@ import textwrap
 # --------------------------------------------------
 # Load trained XGBoost model and label encoder
 # --------------------------------------------------
-
-
 xgb_model = XGBClassifier()
 xgb_model.load_model("xgboost_model (1).json")
 label_encoder = joblib.load("label_encoder.pkl")
 client = genai.Client(
-    api_key=st.secrets["GEMINI_API_KEY"]
-)
+    api_key=st.secrets["GEMINI_API_KEY"])
 # --------------------------------------------------
 # Streamlit page setup
 # --------------------------------------------------
-
 st.set_page_config(
     page_title="AdaptLearn AI",
     page_icon="🧠",
@@ -32,59 +28,44 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 # ---------- ACTIVE DAY TRACKING ----------
-
 today = str(date.today())
-
 if "active_dates" not in st.session_state:
     st.session_state["active_dates"] = []
-
 if today not in st.session_state["active_dates"]:
     st.session_state["active_dates"].append(today)
-
 # --------------------------------------------------
 # Shared helper functions
 # --------------------------------------------------
 @st.cache_resource
 def load_sbert():
     return SentenceTransformer("all-MiniLM-L6-v2")
-
-
 def split_text(text, chunk_size=120, overlap=30):
     words = text.split()
     chunks = []
     start = 0
-
     while start < len(words):
         end = start + chunk_size
         chunk = " ".join(words[start:end])
-
         if chunk.strip():
             chunks.append(chunk)
-
         start += chunk_size - overlap
-
     return chunks
-
 # ---------- PREMIUM ADAPTLEARN THEME ----------
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
-
 html, body, [class*="css"], .stApp {
     font-family: 'DM Sans', sans-serif;
 }
-
 .stApp {
     background: #F7F3EE;
     color: #172033;
 }
-
 .block-container {
     padding-top: 1.6rem;
     padding-bottom: 4rem;
     max-width: 1180px;
 }
-
 [data-testid="stHeader"] {
     background: rgba(247,243,238,.92) !important;
 }
@@ -469,74 +450,55 @@ hr {
 # ==================================================
 # PAGE NAVIGATION
 # ==================================================
-
 if "active_page" not in st.session_state:
     st.session_state["active_page"] = "🏠 Home"
-
-
 def go_to_page(page_name):
     st.session_state["active_page"] = page_name
-
-
 st.sidebar.title("🧠 AdaptLearn AI")
-
 st.sidebar.caption(
     "Personalized Learning Intelligence"
 )
-
 st.sidebar.divider()
-
 st.sidebar.button(
     "🏠 Home",
     use_container_width=True,
     on_click=go_to_page,
     args=("🏠 Home",)
 )
-
 st.sidebar.button(
     "📚 Learn",
     use_container_width=True,
     on_click=go_to_page,
     args=("📚 Learn",)
 )
-
 st.sidebar.button(
     "🧩 Adaptive Quiz",
     use_container_width=True,
     on_click=go_to_page,
     args=("🧩 Adaptive Quiz",)
 )
-
 st.sidebar.button(
     "🎯 Recommendations",
     use_container_width=True,
     on_click=go_to_page,
     args=("🎯 Recommendations",)
 )
-
 st.sidebar.divider()
-
 st.sidebar.caption(
     "Upload → Learn → Assess → Improve"
 )
-
 page = st.session_state[
     "active_page"
 ]
-
 st.sidebar.divider()
-
 st.sidebar.info(
     "Learning Loop:\n\n"
     "Predict → Diagnose → Retrieve → Practice → Reassess → Adapt"
 )
-
-    # ==================================================
+# ==================================================
 # HOME PAGE
 # ==================================================
-
 if page == "🏠 Home":
-
     st.markdown(textwrap.dedent("""
     <div class="premium-hero">
         <div class="hero-kicker">Adaptive learning, built around you</div>
@@ -548,7 +510,6 @@ if page == "🏠 Home":
         <div class="hero-orb"></div>
     </div>
     """), unsafe_allow_html=True)
-
     c1, c2, c3 = st.columns([1, 1, 2])
     with c1:
         st.button(
@@ -566,7 +527,6 @@ if page == "🏠 Home":
             on_click=go_to_page,
             args=("🧩 Adaptive Quiz",)
         )
-
     components.html(
     """
     <style>
@@ -576,37 +536,31 @@ if page == "🏠 Home":
             font-family: Arial, sans-serif;
             overflow: hidden;
         }
-
         .title-small {
             color: #E95D4E;
             font-size: 12px;
             font-weight: 800;
             letter-spacing: 2px;
         }
-
         .title {
             color: #172033;
             font-size: 34px;
             font-weight: 800;
             margin: 8px 0 22px;
         }
-
         .slider {
             width: 100%;
             overflow: hidden;
         }
-
         .track {
             display: flex;
             gap: 18px;
             width: max-content;
             animation: scroll 28s linear infinite;
         }
-
         .track:hover {
             animation-play-state: paused;
         }
-
         .card {
             width: 260px;
             min-width: 260px;
@@ -617,12 +571,10 @@ if page == "🏠 Home":
             box-sizing: border-box;
             box-shadow: 0 10px 25px rgba(0,0,0,0.08);
         }
-
         .dark {
             background: #172033;
             color: white;
         }
-
         .coral {
             background: #E95D4E;
             color: white;
@@ -709,7 +661,6 @@ if page == "🏠 Home":
                 <p>Reassess your understanding after personalized learning.</p>
             </div>
 
-
             <!-- DUPLICATE FOR CONTINUOUS SLIDE -->
 
             <div class="card">
@@ -747,14 +698,12 @@ if page == "🏠 Home":
                 <h3>Measure Progress</h3>
                 <p>Reassess your understanding after personalized learning.</p>
             </div>
-
         </div>
     </div>
     """,
     height=330,
     scrolling=False
 )
-
 st.markdown(textwrap.dedent("""
     <div class="section-eyebrow">How it works</div>
     <div class="journey">
@@ -771,52 +720,39 @@ st.markdown(textwrap.dedent("""
         <span>🔄 Reassess</span>
     </div>
     """), unsafe_allow_html=True)
-
 if "learner_score" in st.session_state:
         st.info(
             "You already have an assessment result. "
             "Open Recommendations to continue your personalized learning path."
         )
-
 # ==================================================
 # LEARNER PROFILE
 # ==================================================
-
 if page == "📚 Learn":
-
     st.header("👤 Learner Profile")
-
     st.caption(
         "Enter your details so AdaptLearn can personalize "
         "your learning experience."
     )
-
     if "student_name" not in st.session_state:
         st.session_state["student_name"] = ""
-
     if "student_email" not in st.session_state:
         st.session_state["student_email"] = ""
-
     with st.form("learner_profile_form"):
-
         student_name = st.text_input(
             "Name",
             value=st.session_state["student_name"],
             placeholder="Enter your name"
         )
-
         student_email = st.text_input(
             "Email (optional)",
             value=st.session_state["student_email"],
             placeholder="example@gmail.com"
         )
-
         save_profile = st.form_submit_button(
             "💾 Save Profile"
         )
-
     if save_profile:
-
         if student_name.strip() == "":
             st.warning("Please enter your name.")
 
@@ -843,12 +779,10 @@ if page == "📚 Learn":
                 f"Welcome, "
                 f"{st.session_state['student_name']}! 👋"
             )
-
     st.divider()
     # ==================================================
     # RAG KNOWLEDGE NAVIGATOR
     # ==================================================
-
     st.header("🤖 AI Knowledge Navigator")
 
     st.caption(
@@ -865,7 +799,6 @@ if page == "📚 Learn":
         "💬 Ask a question from your course material",
         placeholder="Example: What is the difference between TCP and UDP?"
     )
-
 
     if st.button("✨ Ask AI Tutor"):
 
@@ -1044,12 +977,10 @@ if page == "📚 Learn":
                         str(e)
                     )
 
-
     st.divider()
 # ==================================================
 # QUIZ PAGE
 # ==================================================
-
 if page == "🧩 Adaptive Quiz":
         # ---------- LEARNER ACTIVITY TRACKING ----------
 
@@ -1064,19 +995,15 @@ if page == "🧩 Adaptive Quiz":
 # ==================================================
 # AI ADAPTIVE ASSESSMENT
 # ==================================================
-
     st.header("🧩 AI Adaptive Assessment")
 
     st.caption(
         "AdaptLearn automatically creates an assessment "
         "from your uploaded learning material."
     )
-
-
     # --------------------------------------------------
     # Check whether PDF has been processed
     # --------------------------------------------------
-
     if "course_pdf_text" not in st.session_state:
 
         st.info(
@@ -1100,12 +1027,9 @@ if page == "🧩 Adaptive Quiz":
             options=[5, 6, 7, 8, 9, 10],
             value=5
         )
-
-
         # --------------------------------------------------
         # Generate quiz
         # --------------------------------------------------
-
         if st.button("✨ Generate Assessment"):
 
             course_text = st.session_state[
@@ -1124,9 +1048,7 @@ if page == "🧩 Adaptive Quiz":
 
     The purpose is to measure how well the learner
     understands the uploaded material.
-
     Rules:
-
     1. Use ONLY information present in the course material.
     2. Cover different important concepts.
     3. Do not make all questions from one paragraph.
@@ -1136,11 +1058,8 @@ if page == "🧩 Adaptive Quiz":
     memorization questions.
     7. Do NOT include "I don't know" as one of the
     four options. The application adds it separately.
-
     Return ONLY valid JSON.
-
     Use exactly this structure:
-
     [
     {{
         "question": "Question text",
@@ -1154,12 +1073,9 @@ if page == "🧩 Adaptive Quiz":
         "concept": "Concept being tested"
     }}
     ]
-
     COURSE MATERIAL:
-
     {course_text_for_quiz}
     """
-
             try:
 
                 with st.spinner(
@@ -1209,12 +1125,9 @@ if page == "🧩 Adaptive Quiz":
                     "Technical details:",
                     str(e)
                 )
-
-
     # ==================================================
     # DISPLAY GENERATED QUIZ
     # ==================================================
-
     if "generated_quiz" in st.session_state:
 
         quiz = st.session_state[
@@ -1255,16 +1168,12 @@ if page == "🧩 Adaptive Quiz":
 
                 st.divider()
 
-
             submit_quiz = st.form_submit_button(
                 "🧠 Analyze My Understanding"
             )
-
-
         # --------------------------------------------------
         # Analyze learner responses
         # --------------------------------------------------
-
         if submit_quiz:
                  # Record learner activity
             st.session_state["quiz_attempts"] += 1
@@ -1281,7 +1190,6 @@ if page == "🧩 Adaptive Quiz":
                 quiz
             )
 
-
             for i, response in enumerate(
                 responses
             ):
@@ -1294,7 +1202,6 @@ if page == "🧩 Adaptive Quiz":
                     "concept",
                     "Unknown concept"
                 )
-
 
                 if (
                     response is None
@@ -1337,12 +1244,9 @@ if page == "🧩 Adaptive Quiz":
             skip_rate = (
                 skipped / total_questions
             ) * 100
-
-
             # ----------------------------------------------
             # Determine learning level
             # ----------------------------------------------
-
             if score < 50:
 
                 gap = "High Gap"
@@ -1375,15 +1279,12 @@ if page == "🧩 Adaptive Quiz":
                     "Continue with advanced concepts "
                     "and challenging practice."
                 )
-
-
             # Remove duplicate concepts
             weak_concepts = list(
                 dict.fromkeys(
                     weak_concepts
                 )
             )
-
 
             # Save learner profile
             st.session_state[
@@ -1401,12 +1302,9 @@ if page == "🧩 Adaptive Quiz":
             st.session_state[
                 "weak_concepts"
             ] = weak_concepts
-
-
             # ----------------------------------------------
             # Display analysis
             # ----------------------------------------------
-
             st.success(
                 "Assessment analyzed successfully."
             )
@@ -1415,9 +1313,7 @@ if page == "🧩 Adaptive Quiz":
                 "🧠 Your Learning Diagnosis"
             )
 
-
             col1, col2, col3, col4 = st.columns(4)
-
 
             with col1:
 
@@ -1426,14 +1322,12 @@ if page == "🧩 Adaptive Quiz":
                     f"{score:.0f}%"
                 )
 
-
             with col2:
 
                 st.metric(
                     "Correct",
                     f"{correct}/{total_questions}"
                 )
-
 
             with col3:
 
@@ -1442,7 +1336,6 @@ if page == "🧩 Adaptive Quiz":
                     skipped
                 )
 
-
             with col4:
 
                 st.metric(
@@ -1450,29 +1343,23 @@ if page == "🧩 Adaptive Quiz":
                     gap
                 )
 
-
             st.write(
                 f"**Current Learning Level:** "
                 f"{learning_level}"
             )
-
 
             st.write(
                 f"**Skip Rate:** "
                 f"{skip_rate:.0f}%"
             )
 
-
             st.info(
                 "🎯 Recommended Next Step: "
                 + recommendation
             )
-
-
             # ----------------------------------------------
             # Weak concept detection
             # ----------------------------------------------
-
             if weak_concepts:
 
                 st.subheader(
@@ -1549,14 +1436,12 @@ for i, result in enumerate(
 # ==================================================
 # RECOMMENDATIONS PAGE
 # ==================================================
-
 if page == "🎯 Recommendations":
 
     st.header("🎯 Personalized Recommendations")
         # ==========================================
     # XGBOOST LEARNER ANALYTICS
     # ==========================================
-
     if st.session_state.get("quiz_scores"):
 
         # Real values collected from this LMS
@@ -1905,7 +1790,6 @@ if page == "🎯 Recommendations":
                             "Technical details:",
                             str(e)
                         )
-
 
     if "personalized_learning" in st.session_state:
 
@@ -2328,85 +2212,5 @@ if page == "🎯 Recommendations":
                 "in this reassessment."
             )
 
-
     st.divider()
 
-
-# ==================================================
-# TOPIC-LEVEL KNOWLEDGE GAP
-# ==================================================
-
-# st.header("🎯 Topic-Level Knowledge Gap")
-
-# topic = st.selectbox(
-#     "Select Topic",
-#     [
-#         "TCP and UDP",
-#         "OSI Model",
-#         "Routing",
-#         "IP Addressing",
-#         "Network Topologies"
-#     ]
-# )
-
-# topic_score = st.number_input(
-#     "Topic Assessment Score",
-#     min_value=0.0,
-#     max_value=100.0,
-#     step=1.0
-# )
-
-
-# # --------------------------------------------------
-# # Topic-level adaptive learning logic
-# # --------------------------------------------------
-
-# if topic_score < 50:
-
-#     topic_gap = "High Gap"
-
-#     topic_action = (
-#         "Study basic concepts + Simple examples "
-#         "+ Easy practice"
-#     )
-
-#     search_level = "basic concepts and simple explanation"
-
-
-# elif topic_score < 70:
-
-#     topic_gap = "Moderate Gap"
-
-#     topic_action = (
-#         "Targeted revision + Worked examples "
-#         "+ Practice questions"
-#     )
-
-#     search_level = "revision material and worked examples"
-
-
-# else:
-
-#     topic_gap = "Low Gap"
-
-#     topic_action = (
-#         "Advanced content + Challenging quiz"
-#     )
-
-#     search_level = "advanced learning material"
-
-
-# st.write(
-#     "**Current Topic:**",
-#     topic
-# )
-
-# st.write(
-#     "**Topic Gap Level:**",
-#     topic_gap
-# )
-
-# st.info(
-#     "Recommended Action: "
-#     + topic_action
-# )
